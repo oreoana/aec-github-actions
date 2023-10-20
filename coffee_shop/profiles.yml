@@ -1,0 +1,20 @@
+coffee_shop:
+  target: dev
+  outputs:
+    dev:
+      dataset: dbt_oriana
+      job_execution_timeout_seconds: 300
+      job_retries: 1
+      location: US
+      method: oauth
+      priority: interactive
+      project: aec-students
+      threads: 8
+      type: bigquery
+    ci:
+      type: bigquery
+      method: service-account
+      project: aec-students
+      dataset: dbt_oriana_ci
+      threads: 8
+      keyfile: ./coffee_shop/gcp-credentials.json
