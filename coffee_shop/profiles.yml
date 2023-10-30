@@ -17,4 +17,4 @@ coffee_shop:
       project: aec-students
       dataset: dbt_oriana_ci
       threads: 8
-      keyfile: ./coffee_shop/gcp-credentials.json
+      keyfile: ./coffee_shop/gcp-credentials.json  # Update this with the path of the keyfile that gets created in the CI workflow

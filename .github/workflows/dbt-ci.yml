@@ -17,7 +17,7 @@ jobs:
 
     env:
       DBT_PROFILES_DIR: ./coffee_shop  # Specify the location of the profiles.yml file
-      DBT_PROJECT_DIR: ./coffee_shop
+      DBT_PROJECT_DIR: ./coffee_shop  # Specify the location of the project directory
       SERVICE_ACCOUNT_KEY: ${{ secrets.BIGQUERY_SERVICE_ACCOUNT_KEY }}
       
     steps:
@@ -27,9 +27,9 @@ jobs:
           ref: ${{ github.event.pull_request.head.sha }}  # Checkout the specific commit of the pull request
 
       - name: Create GCP keyfile JSON
-        run: |
+        run: | # Creates the keyfile and moves it to the profiles directory
           echo "$SERVICE_ACCOUNT_KEY" > gcp-credentials.json
-          mv gcp-credentials.json $DBT_PROFILES_DIR  # Move the keyfile to the profiles directory
+          mv gcp-credentials.json $DBT_PROFILES_DIR 
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -41,6 +41,6 @@ jobs:
           pip install dbt-bigquery
           dbt debug --target ci
 
-      - name: Run dbt
+      - name: Run dbt build
         run: |
-          dbt run --profiles-dir "$DBT_PROFILES_DIR" --target ci --project-dir "$DBT_PROJECT_DIR"
+          dbt build --profiles-dir "$DBT_PROFILES_DIR" --target ci --project-dir "$DBT_PROJECT_DIR"
