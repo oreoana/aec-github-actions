@@ -10,7 +10,8 @@
 		"ghcr.io/devcontainers/features/python:1": {},
 		"ghcr.io/dhoeric/features/google-cloud-cli:1": {},
 		"ghcr.io/guiyomh/features/vim:0": {},
-		"ghcr.io/devcontainers/features/docker-in-docker:2": {}
+		"ghcr.io/devcontainers/features/docker-in-docker:2": {},
+		"ghcr.io/devcontainers-contrib/features/act:1": {}
 	},
 
 	// Features to add to the dev container. More info: https://containers.dev/features.
@@ -20,7 +21,7 @@
 	// "forwardPorts": [],
 
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "git clone https://github.com/aec-self-study/aec-dotfiles /home/vscode/temp && chmod a=rwx -R /home/vscode/temp && mv /home/vscode/temp/.bash_profile /home/vscode/temp/.bashrc /home/vscode/temp/.gitconfig /home/vscode/temp/.git-completion.bash /home/vscode/ && rm -rf /home/vscode/temp"
+	"postCreateCommand": "git clone https://github.com/aec-self-study/aec-dotfiles /home/vscode/temp && chmod a=rwx -R /home/vscode/temp && mv /home/vscode/temp/.bash_profile /home/vscode/temp/.bashrc /home/vscode/temp/.gitconfig /home/vscode/temp/.git-completion.bash /home/vscode/ && rm -rf /home/vscode/temp && python3 -m venv .venv && source .venv/bin/activate"
 
 	// Configure tool-specific properties.
 	// "customizations": {},
