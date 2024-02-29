@@ -18,7 +18,8 @@ jobs:
     env:
       DBT_PROFILES_DIR: ./coffee_shop  # Specify the location of the profiles.yml file
       DBT_PROJECT_DIR: ./coffee_shop  # Specify the location of the project directory
-      SERVICE_ACCOUNT_KEY: ${{ secrets.BIGQUERY_SERVICE_ACCOUNT_KEY }}
+      PROJECT_ID: ${{ secrets.BIGQUERY_PROJECT_ID }}  # Update with the name of the secret containing the project ID
+      SERVICE_ACCOUNT_KEY: ${{ secrets.BIGQUERY_SERVICE_ACCOUNT_KEY }}  # Update with the name of the secret containing the service account key
       
     steps:
       - name: Checkout PR code
@@ -38,8 +39,23 @@ jobs:
 
       - name: Install dbt-bigquery
         run: |
-          pip install dbt-bigquery
-          dbt debug --target ci
+          pip install -r requirements.txt
+
+      - name: Configure dbt Profile
+        run: |
+          echo "
+          coffee_shop:
+            target: ci
+            outputs:
+              ci:
+                type: bigquery
+                method: service-account
+                keyfile: $DBT_PROFILES_DIR/gcp-credentials.json
+                project: $PROJECT_ID
+                dataset: dbt_oriana_ga_ci
+                threads: 4
+                timeout_seconds: 300
+          " > $DBT_PROFILES_DIR/profiles.yml
 
       - name: Run dbt build
         run: |
