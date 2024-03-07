@@ -37,7 +37,7 @@ jobs:
         with:
           python-version: 3.11  # Choose the Python version you need
 
-      - name: Install dbt-bigquery
+      - name: Install requirements
         run: |
           pip install -r requirements.txt
 
