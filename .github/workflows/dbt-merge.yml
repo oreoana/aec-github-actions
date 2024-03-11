@@ -12,8 +12,8 @@ env:
   DBT_PROFILES_DIR: ./coffee_shop  # Specify the location of the profiles.yml file
   DBT_PROJECT_DIR: ./coffee_shop  # Specify the location of the project directory
   SCHEMA_PREFIX: dbt_oriana_ga_pr  # Specify the prefix for the PR schema
-  BIGQUERY_PROJECT_ID: ${{ secrets.BIGQUERY_PROJECT_ID }}  # Update with the name of the secret containing the project ID
-  BIGQUERY_SERVICE_ACCOUNT_KEY: ${{ secrets.BIGQUERY_SERVICE_ACCOUNT_KEY }}  # Update with the name of the secret containing the service account key
+  PROJECT_ID: ${{ secrets.BIGQUERY_PROJECT_ID }}  # Update with the name of the secret containing the project ID
+  SERVICE_ACCOUNT_KEY: ${{ secrets.BIGQUERY_SERVICE_ACCOUNT_KEY }}  # Update with the name of the secret containing the service account key
 
 jobs:
   run-production-models:
