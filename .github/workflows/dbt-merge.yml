@@ -49,7 +49,7 @@ jobs:
                 type: bigquery
                 method: service-account
                 keyfile: $DBT_PROFILES_DIR/gcp-credentials.json
-                project: $BIGQUERY_PROJECT_ID
+                project: $PROJECT_ID
                 dataset: dbt_oriana_ga_prod
                 threads: 4
                 timeout_seconds: 300
@@ -82,6 +82,6 @@ jobs:
       - name: Remove PR Schema
         run: |
           PR_SCHEMA="${{ env.SCHEMA_PREFIX }}_${{ github.event.number }}"
-          gcloud config set project $PROJECT_ID
+          gcloud config set project $BIGQUERY_PROJECT_ID
           gcloud beta bq datasets delete $PR_SCHEMA
           --force
