@@ -26,6 +26,11 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}  # Checkout the specific commit of the pull request
 
+      - name: Create GCP keyfile JSON
+        run: |
+          echo "$SERVICE_ACCOUNT_KEY" > gcp-credentials.json
+          mv gcp-credentials.json $DBT_PROFILES_DIR
+
       - name: Set up Python
         uses: actions/setup-python@v2
         with:
@@ -34,10 +39,6 @@ jobs:
       - name: Install requirements
         run: |
           pip install -r requirements.txt
-      
-      - name: Create GCP keyfile JSON
-        run: |
-          echo "$BIGQUERY_SERVICE_ACCOUNT_KEY" > $DBT_PROFILES_DIR/gcp-credentials.json
           
       - name: Configure dbt Profile
         run: |
@@ -57,7 +58,7 @@ jobs:
 
       - name: Run dbt
         run: |
-          dbt run --profiles-dir "$DBT_PROFILES_DIR" --target prod --project-dir "$DBT_PROJECT_DIR"  
+          dbt build --profiles-dir "$DBT_PROFILES_DIR" --target prod --project-dir "$DBT_PROJECT_DIR"
 
       - name: Generate dbt docs
         run: dbt docs generate
@@ -68,12 +69,10 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: ${{ env.DBT_PROJECT_DIR }}/target
 
-  cleanup-schemas:
-    if: github.event.pull_request.merged == true || github.event.pull_request.closed == true
-    runs-on: ubuntu-latest
-    needs: run-production-models
-      
-    steps:
+      - name: Install Google Cloud SDK
+        run: |
+          echo "deb [signed-by=/usr/share/keyrings/cloud.google.gpg] https://packages.cloud.google.com/apt cloud-sdk main" | tee -a /etc/apt/sources.list.d/google-cloud-sdk.list && curl https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo gpg --dearmor -o /usr/share/keyrings/cloud.google.gpg && apt-get update -y && apt-get install google-cloud-sdk -y
+
       - name: Authenticate to GCP
         uses: google-github-actions/auth@v0.4.0
         with:
@@ -82,6 +81,6 @@ jobs:
       - name: Remove PR Schema
         run: |
           PR_SCHEMA="${{ env.SCHEMA_PREFIX }}_${{ github.event.number }}"
-          gcloud config set project $BIGQUERY_PROJECT_ID
-          gcloud beta bq datasets delete $PR_SCHEMA
-          --force
+          echo $PR_SCHEMA
+          gcloud config set project $PROJECT_ID
+          gcloud alpha bq datasets delete $PR_SCHEMA --quiet --remove-tables
